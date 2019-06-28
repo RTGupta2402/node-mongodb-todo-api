@@ -8,6 +8,7 @@ const bodyParser = require('body-parser');
 var {mongoose} = require('./db/mongoose.js');
 var {Todo} = require('./models/todo');
 var {User} = require('./models/user');
+var {authenticate} = require('./middleware/authenticate');
 
 var app = express();
 const port = process.env.PORT;
@@ -109,7 +110,7 @@ app.post('/users', (req, res) => {
   var user = new User(body);
 
   user.save().then(() => {
-    //generate the token for this user
+    //generate the token for this user (instance)
     return user.generateAuthToken();
     // res.send(user);
   }).then((token) => {
@@ -119,6 +120,32 @@ app.post('/users', (req, res) => {
   }).catch ((err) => {
     res.status(400).send(err);
   });
+});
+
+// app.get('/users', (req, res) => {
+//   User.find().then((users) => {
+//     res.send({users});
+//   }, (e) => {
+//     res.status(400).send(e);
+//   });
+// });
+
+app.get('/users/me', authenticate, (req, res) => {
+  res.send(req.user);
+  // // req.header fetched the token
+  // var token = req.header('x-auth');
+  //
+  // // model method accessed via model User
+  // User.findByToken(token).then((user) => {
+  //   if (!user) {
+  //     // res.status(401).send();
+  //     return Promise.reject();
+  //   }
+  //
+  //   res.send(user);
+  // }).catch((e) => {
+  //   res.status(401).send();
+  // });
 });
 
 app.listen(port, () => {
