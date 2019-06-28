@@ -130,6 +130,7 @@ app.post('/users', (req, res) => {
 //   });
 // });
 
+// GET /users/me
 app.get('/users/me', authenticate, (req, res) => {
   res.send(req.user);
   // // req.header fetched the token
