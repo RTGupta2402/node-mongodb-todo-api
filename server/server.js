@@ -108,9 +108,15 @@ app.post('/users', (req, res) => {
   var body = _.pick(req.body, ['email', 'password']);
   var user = new User(body);
 
-  user.save().then((user) => {
-    res.send(user);
-  }, (err) => {
+  user.save().then(() => {
+    //generate the token for this user
+    return user.generateAuthToken();
+    // res.send(user);
+  }).then((token) => {
+    // this promise is used to send back the user associated with the token generated.
+    // token is sent back as HTTP header (K,V) - x-auth custom header and value=token
+    res.header('x-auth', token).send(user);
+  }).catch ((err) => {
     res.status(400).send(err);
   });
 });

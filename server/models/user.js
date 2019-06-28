@@ -1,7 +1,9 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
+const jwt = require('jsonwebtoken');
+const _ = require('lodash');
 
-var User = mongoose.model('Users', {
+var UserSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
@@ -29,6 +31,38 @@ var User = mongoose.model('Users', {
     }
   }]
 });
+
+// used to limit the data coming back as response after converting mongoose.model into JSON.
+UserSchema.methods.toJSON = function () {
+  var user = this;
+  // converts the model into an object
+  var userObject = user.toObject();
+
+  // return only the properties that needs to be sent in response.
+  return _.pick(userObject, ['_id', 'email']);
+};
+
+// we need to bind 'this' keyword to the individual doc
+UserSchema.methods.generateAuthToken = function () {
+  // 'this' keyword binds user variable.
+  var user = this;
+  var access = 'auth';
+  var token = jwt.sign({
+    _id: user._id.toHexString(),
+    access
+  }, 'secret').toString();
+
+  // update tokens array
+  user.tokens.push({access, token});
+
+  // save the changes to user
+  return user.save().then(() => {
+    // return the token to be able to grab the token later.
+    return token;
+  });
+};
+
+var User = mongoose.model('Users', UserSchema);
 
 module.exports = {
   User
