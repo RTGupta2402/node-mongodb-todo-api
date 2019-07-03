@@ -21,7 +21,7 @@ MongoClient.connect('mongodb://localhost:27017/TodoApp', (err, db) => {
   //   if (err) {
   //     return console.log('Unable to insert todo', err);
   //   }
-  //
+  //   res.ops - stores all the docs that are inserted
   //   console.log(JSON.stringify(result.ops, undefined, 2));
   // });
 

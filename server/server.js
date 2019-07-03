@@ -37,19 +37,22 @@ app.get('/todos', (req, res) => {
   });
 });
 
+// GET /todos/parameters (:param)
 app.get('/todos/:id', (req, res) => {
   var id = req.params.id;
   // res.send(req.params);
 
+  //validating the ID
   if (!ObjectID.isValid(id)) {
     return res.status(404).send();
   }
-
+  //find the todo associated with id
   Todo.findById(id).then((todo) => {
+    //when id is not found
     if(!todo) {
       return res.status(404).send();
     }
-
+    //send the fetched todo
     res.send({todo});
     console.log(JSON.stringify(todo, undefined, 2));
   }, (e) => {
@@ -104,7 +107,7 @@ app.patch('/todos/:id', (req, res) => {
   }).catch((e) => res.status(400).send());
 });
 
-// POST /users
+// POST /users sign-up call
 app.post('/users', (req, res) => {
   var body = _.pick(req.body, ['email', 'password']);
   var user = new User(body);

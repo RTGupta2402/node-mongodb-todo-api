@@ -43,7 +43,7 @@ UserSchema.methods.toJSON = function () {
   return _.pick(userObject, ['_id', 'email']);
 };
 
-// we need to bind 'this' keyword to the individual doc
+// Instance-methods - we need to bind 'this' keyword to the individual doc
 UserSchema.methods.generateAuthToken = function () {
   // 'this' keyword binds user instance.
   var user = this;
