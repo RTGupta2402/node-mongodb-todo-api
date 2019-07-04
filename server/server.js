@@ -152,6 +152,22 @@ app.get('/users/me', authenticate, (req, res) => {
   // });
 });
 
+// POST /users/login {email, password}
+app.post('/users/login', (req, res) => {
+  var body = _.pick(req.body, ['email', 'password']);
+  
+  // res.send(body);
+  // verify the user exists with credentials passed in request
+  User.findByCredentials(body.email, body.password).then((user) => {
+    // res.send(user);
+    user.generateAuthToken().then((token) => {
+      return res.header('x-auth', token).send(user);
+    })
+  }).catch((e) => {
+    res.status(400).send();
+  });
+});
+
 app.listen(port, () => {
   console.log('Started on port 3000.');
 });
