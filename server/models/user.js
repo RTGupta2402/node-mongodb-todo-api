@@ -63,6 +63,14 @@ UserSchema.methods.generateAuthToken = function () {
   });
 };
 
+UserSchema.methods.removeToken = function (token) {
+  var user = this;
+  // $pull is a mongodb operator which lets us remove items from an array that match certain criteria.
+  return user.update({
+    $pull: {tokens: {token}}
+  });
+};
+
 // model method defined through statics
 UserSchema.statics.findByToken = function (token) {
   // 'this' keyword binds User model
