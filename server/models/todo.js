@@ -14,6 +14,11 @@ var Todo = mongoose.model('Todo', {
   completedAt: {
     type: Number,
     default: null
+  },
+  // To make todo routes private
+  _creator: {
+    type: mongoose.Schema.Types.ObjectId, //_creator is an ObjectId
+    required: true                        // to ensure that user is logged in
   }
 });
 
